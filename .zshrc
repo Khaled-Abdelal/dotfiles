@@ -8,7 +8,10 @@ export ZSH="/home/khaled.abdelal/.oh-my-zsh"
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
 # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
-ZSH_THEME="agnoster"
+# ZSH_THEME="agnoster"
+
+# use starthip for prompt
+eval "$(starship init zsh)"
 
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
@@ -70,12 +73,25 @@ ZSH_THEME="agnoster"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git zsh-autosuggestions zsh-z)
-ZSHZ_CASE=smart
-source <(antibody init)
-antibody bundle < ~/.zsh_plugins.txt
 
+plugins=(git zsh-autosuggestions zsh-z zsh-syntax-highlighting vi-mode)
+VI_MODE_SET_CURSOR=true
+ZSHZ_CASE=smart
+
+# history setup
+HISTFILE=$HOME/.zhistory
+SAVEHIST=1000
+HISTSIZE=999
+setopt share_history 
+setopt hist_expire_dups_first
+setopt hist_ignore_dups
+setopt hist_verify
+
+# completion using arrow keys (based on history)
+bindkey '^[[A' history-search-backward
+bindkey '^[[B' history-search-forward
 source $ZSH/oh-my-zsh.sh
+
 
 # User configuration
 
@@ -102,7 +118,6 @@ source $ZSH/oh-my-zsh.sh
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
-xbindkeys -p
 
 export DEFAULT_USER="$(whoami)"
 
@@ -116,3 +131,14 @@ export GOPATH=$HOME/go
 export GOBIN=$GOPATH/bin
 export PYTHONPATH=$HOME/.local/bin
 export PATH=$PATH:$GOROOT:$GOPATH:$GOBIN:$PYTHONPATH
+
+
+# zoxide is an alternative to cd
+eval "$(zoxide init zsh)"
+# alias cd="z"
+
+# eza is modern ls alternative
+alias ls="eza -lh --group-directories-first --icons"
+
+# tmux sessionizer
+bindkey -s ^f "tmux-sessionizer\n"
