@@ -18,7 +18,37 @@ command = "sessionizer.pick"
 description = "fuzzy-switch workspace"
 
 [[keys.command]]
+key = "ctrl+f"
+type = "plugin_action"
+command = "sessionizer.pick"
+description = "fuzzy-switch workspace (same session)"
+
+[[keys.command]]
 key = "prefix+a"
 type = "plugin_action"
 command = "sessionizer.agents"
 description = "jump to an agent"
+
+[[keys.command]]
+key = "ctrl+h"
+type = "plugin_action"
+command = "vim-herdr-navigation.left"
+description = "navigate left (vim/herdr)"
+
+[[keys.command]]
+key = "ctrl+j"
+type = "plugin_action"
+command = "vim-herdr-navigation.down"
+description = "navigate down (vim/herdr)"
+
+[[keys.command]]
+key = "ctrl+k"
+type = "plugin_action"
+command = "vim-herdr-navigation.up"
+description = "navigate up (vim/herdr)"
+
+[[keys.command]]
+key = "ctrl+l"
+type = "plugin_action"
+command = "vim-herdr-navigation.right"
+description = "navigate right (vim/herdr)"

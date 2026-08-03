@@ -11,7 +11,11 @@ zoxide init fish | source
 
 # local scripts ex tmux sessionizer
 set PATH "$PATH":"$HOME/.local/scripts/"
-bind \cf tmux-sessionizer
+bind \cf herdr-switcher
+bind -M insert \cf herdr-switcher
+bind -M normal \cf herdr-switcher
+bind -M visual \cf herdr-switcher
+fish_vi_key_bindings --no-erase
 # cargo
 set PATH "$PATH":"$HOME/.cargo/bin"
 

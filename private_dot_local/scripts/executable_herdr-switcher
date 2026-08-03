@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# no HERDR_ENV guard here: inside a herdr pane with a current client, herdr
+# itself owns ctrl+f (sessionizer.pick) and it never reaches the shell. A
+# terminal spawned from a pane inherits HERDR_ENV but should still pick.
+
+candidates="$({
+  zoxide query -l 2>/dev/null || true
+  printf '%s\n' "$HOME/Documents/work" "$HOME/Documents/personal"
+} | awk '!seen[$0]++')"
+
+dir="$(printf '%s\n' "$candidates" | fzf --prompt 'project> ' --height 40%)" || exit 0
+[ -n "$dir" ] || exit 0
+dir="$(realpath "$dir")"
+
+case "$dir" in
+  "$HOME/Documents/work"/* | "$HOME/Documents/work") session="work" ;;
+  *) session="personal" ;;
+esac
+
+export HERDR_SESSION="$session"
+# drop any herdr context inherited from a parent herdr session so CLI
+# calls route via HERDR_SESSION instead of an inherited socket
+unset HERDR_SOCKET_PATH HERDR_PANE_ID HERDR_TAB_ID HERDR_WORKSPACE_ID 2>/dev/null || true
+
+# make sure the session server is running (error when already running is fine)
+herdr server >/dev/null 2>&1 || true
+
+# sessionizer standalone: create-or-focus with template tabs
+plugin_root="$(herdr plugin list --json 2>/dev/null |
+  jq -r '.result.plugins[] | select(.name == "Sessionizer") | .manifest_path' |
+  xargs -r dirname 2>/dev/null || true)"
+
+if [ -n "$plugin_root" ] && [ -x "$plugin_root/bin/sessionizer" ]; then
+  "$plugin_root/bin/sessionizer" "$dir"
+else
+  ws="$(herdr api snapshot 2>/dev/null | jq -r --arg dir "$dir" '
+    .result.snapshot as $s
+    | $s.workspaces[]
+    | . as $w
+    | select(([$s.panes[] | select(.workspace_id == $w.workspace_id)][0].cwd // "") == $dir)
+    | $w.workspace_id
+  ' | head -n1)"
+  if [ -n "$ws" ]; then
+    herdr workspace focus "$ws" >/dev/null
+  else
+    herdr workspace create --cwd "$dir" --label "$(basename "$dir")" --focus >/dev/null
+  fi
+fi
+
+exec herdr
