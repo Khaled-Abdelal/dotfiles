@@ -19,3 +19,11 @@ set PATH "$PATH":"$HOME/.cargo/bin"
 set PATH "$PATH":"$HOME/.pulumi/bin"
 
 eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+
+# opencode
+fish_add_path /home/khaled/.opencode/bin
+
+# herdr
+herdr completion fish | source
+alias hw='herdr --session work'
+alias hp='herdr --session personal'

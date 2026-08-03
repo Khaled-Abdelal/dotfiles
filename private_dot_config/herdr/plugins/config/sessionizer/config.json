@@ -1,0 +1,26 @@
+{
+  "template": [
+    { "tab": "main" }
+  ],
+  "git_roots_only": false,
+  "extra_dirs": [
+    "~/Documents/work",
+    "~/Documents/personal"
+  ],
+  "overrides": [
+    {
+      "match": "*/work/*",
+      "template": [
+        { "tab": "agents", "command": "cursor-agent" },
+        { "tab": "commands" }
+      ]
+    },
+    {
+      "match": "*/personal/*",
+      "template": [
+        { "tab": "agents", "command": "opencode" },
+        { "tab": "commands" }
+      ]
+    }
+  ]
+}

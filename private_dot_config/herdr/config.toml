@@ -1,0 +1,24 @@
+onboarding = false
+
+[theme]
+name = "catppuccin"
+
+# keep tmux muscle memory: prefix is ctrl+a, splits are | and -,
+# prefix+m maximizes, focus stays on h/j/k/l
+[keys]
+prefix = "ctrl+a"
+split_vertical = "prefix+|"
+split_horizontal = "prefix+-"
+zoom = "prefix+m"
+
+[[keys.command]]
+key = "prefix+f"
+type = "plugin_action"
+command = "sessionizer.pick"
+description = "fuzzy-switch workspace"
+
+[[keys.command]]
+key = "prefix+a"
+type = "plugin_action"
+command = "sessionizer.agents"
+description = "jump to an agent"
