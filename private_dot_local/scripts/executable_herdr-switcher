@@ -24,8 +24,18 @@ export HERDR_SESSION="$session"
 # calls route via HERDR_SESSION instead of an inherited socket
 unset HERDR_SOCKET_PATH HERDR_PANE_ID HERDR_TAB_ID HERDR_WORKSPACE_ID 2>/dev/null || true
 
-# make sure the session server is running (error when already running is fine)
-herdr server >/dev/null 2>&1 || true
+# make sure the session server is running. `herdr server` runs in the
+# foreground and blocks on a cold start, so start it in the background; when
+# a server is already running it errors out and exits immediately.
+herdr server </dev/null >/dev/null 2>&1 &
+disown
+
+# wait until the server answers its API before driving it (on a fresh start
+# the socket may not be bound yet, or a stale socket briefly refuses).
+for _ in {1..100}; do
+  herdr api snapshot >/dev/null 2>&1 && break
+  sleep 0.1
+done
 
 # sessionizer standalone: create-or-focus with template tabs
 plugin_root="$(herdr plugin list --json 2>/dev/null |
